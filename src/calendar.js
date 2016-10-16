@@ -1,4 +1,6 @@
 ( function( root ) {
+  "use strict";
+
   root.calendar = {
     createDates: function( year, month ) {
       var start = this._getLastMonday( year, month ), end = this._getDates( year, month ), dates = [], date;
