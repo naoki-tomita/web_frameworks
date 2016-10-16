@@ -1,0 +1,23 @@
+{
+  "name": "web_frameworks",
+  "version": "1.0.0",
+  "description": "web framework trade fair",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://naoki-tomita@github.com/naoki-tomita/web_frameworks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/naoki-tomita/web_frameworks/issues"
+  },
+  "homepage": "https://github.com/naoki-tomita/web_frameworks#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-webserver": "^0.9.1"
+  }
+}
