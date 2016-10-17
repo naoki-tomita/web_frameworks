@@ -12,14 +12,15 @@
 li {
   padding: 4px;
   width: 90;
+  height: 40;
 	float: left;
 	list-style: none;
   border: 1px solid black;
 }
 -->
 </style>
-<input type="text" data-bind="value: koYear, valueUpdate: 'input', afterkeydown: koUpdateCalendar"></input>
-<input type="text" data-bind="value: koMonth, valueUpdate: 'input', afterkeydown: koUpdateCalendar"></input>
+<input type="text" data-bind="value: koYear, valueUpdate: 'afterkeydown', event: { change: koUpdateCalendar }"></input>
+<input type="text" data-bind="value: koMonth, valueUpdate: 'afterkeydown', event: { change: koUpdateCalendar }"></input>
 <br>
 <div id="calendar">
   <ul>
@@ -33,23 +34,51 @@ li {
     <!-- ko foreach: koDates -->
     <li data-bind="style: { color: $parent.getColor( $data ) }, click: $parent.koClick">
       <div data-bind="text: date"></div>
-      <div data-bind="text: $data.schedule, visible: $data.schedule"></div>
+      <div data-bind="text: $data.schedule?$data.schedule:'none'"></div>
     </li>
     <!-- /ko -->
   </ul>
 </div>
 <script type='text/javascript' src='../calendar.js'></script>
 <script>
-  var vm, today = new Date();
+  var vm, today = new Date(), model;
+  model = {
+    init: function( year, month ) {
+      this.year = year;
+      this.month = month;
+      this.data = calendar.createDates( year, month );
+    },
+    updateCalendar: function( year, month ) {
+      this.init( year, month );
+    },
+    updateSchedule: function( date, schedule ) {
+      if ( schedule ) {
+        this.data[ this.searchIndex( date ) ].schedule = schedule;
+      }
+    },
+    searchIndex: function( date ) {
+      for ( var i in this.data ) {
+        if( date.data.toString() === this.data[ i ].data.toString() ) {
+          return i;
+        }
+      }
+      return -1;
+    },
+    getCalendar: function() {
+      return this.data;
+    }
+  };
+  model.init( today.getFullYear(), today.getMonth() + 1 );
   vm = {
-    koYear: ko.observable( today.getFullYear() ),
-    koMonth: ko.observable( today.getMonth() + 1 ),
-    koDates: ko.observable( [] ),
+    koYear: ko.observable( model.year ),
+    koMonth: ko.observable( model.month ),
+    koDates: ko.observableArray( model.getCalendar() ),
     koUpdateCalendar: function() {
-      vm.koDates( calendar.createDates( vm.koYear(), vm.koMonth() ) );
+      model.updateCalendar( vm.koYear(), vm.koMonth() );
+      vm.koDates( model.getCalendar() );
     },
     getColor: function( date ) {
-      if ( date.data.getMonth() + 1 !== vm.koMonth() ) {
+      if ( date.data.getMonth() + 1 !== parseInt( model.month, 10 ) ) {
         return "gray";
       } else if ( date.data.getDay() === 0 ) { // 日曜
         return "red";
@@ -61,23 +90,11 @@ li {
     koClick: function( date ) {
       var str = window.prompt( "予定を入力" ), tmp, i;
       if ( str ) {
-        date.schedule = str;
-        tmp = vm.koDates();
-        i = vm.getIndex( date );
-        tmp[ i ] = date;
+        model.updateSchedule( date, str );
         vm.koDates( [] );
-        vm.koDates( tmp );
+        vm.koDates( model.getCalendar() );
       }
-    },
-    getIndex: function( date ) {
-      for ( var i in vm.koDates() ) {
-        if( date.data.toString() === vm.koDates()[ i ].data.toString() ) {
-          return i;
-        }
-      }
-      return -1;
     }
   };
-  vm.koUpdateCalendar();
   ko.applyBindings( vm );
 </script>
