@@ -10,15 +10,17 @@
 	width: 700px;
 }
 li {
-	margin: 5px;
+  padding: 4px;
   width: 90;
 	float: left;
 	list-style: none;
+  border: 1px solid black;
 }
 -->
 </style>
-<input type="text" data-bind="value: koYear, valueUpdate: 'input'"></input>
-<input type="text" data-bind="value: koMonth, valueUpdate: 'input'"></input>
+<input type="text" data-bind="value: koYear, valueUpdate: 'input', afterkeydown: koUpdateCalendar"></input>
+<input type="text" data-bind="value: koMonth, valueUpdate: 'input', afterkeydown: koUpdateCalendar"></input>
+<br>
 <div id="calendar">
   <ul>
     <li>mon</li>
@@ -29,20 +31,53 @@ li {
     <li>sat</li>
     <li>sun</li>
     <!-- ko foreach: koDates -->
-    <li data-bind="text: text">
+    <li data-bind="style: { color: $parent.getColor( $data ) }, click: $parent.koClick">
+      <div data-bind="text: date"></div>
+      <div data-bind="text: $data.schedule, visible: $data.schedule"></div>
     </li>
     <!-- /ko -->
   </ul>
 </div>
-<script type='text/javascript' src='./calendar.js'></script>
+<script type='text/javascript' src='../calendar.js'></script>
 <script>
   var vm, today = new Date();
   vm = {
     koYear: ko.observable( today.getFullYear() ),
-    koMonth: ko.observable( today.getMonth() + 1 )
+    koMonth: ko.observable( today.getMonth() + 1 ),
+    koDates: ko.observable( [] ),
+    koUpdateCalendar: function() {
+      vm.koDates( calendar.createDates( vm.koYear(), vm.koMonth() ) );
+    },
+    getColor: function( date ) {
+      if ( date.data.getMonth() + 1 !== vm.koMonth() ) {
+        return "gray";
+      } else if ( date.data.getDay() === 0 ) { // 日曜
+        return "red";
+      } else if ( date.data.getDay() === 6 ) {// 土曜
+        return "blue";
+      }
+      return "black";
+    },
+    koClick: function( date ) {
+      var str = window.prompt( "予定を入力" ), tmp, i;
+      if ( str ) {
+        date.schedule = str;
+        tmp = vm.koDates();
+        i = vm.getIndex( date );
+        tmp[ i ] = date;
+        vm.koDates( [] );
+        vm.koDates( tmp );
+      }
+    },
+    getIndex: function( date ) {
+      for ( var i in vm.koDates() ) {
+        if( date.data.toString() === vm.koDates()[ i ].data.toString() ) {
+          return i;
+        }
+      }
+      return -1;
+    }
   };
-  vm.koDates = ko.computed( function() {
-    return calendar.createDates( vm.koYear(), vm.koMonth() );
-  } );
+  vm.koUpdateCalendar();
   ko.applyBindings( vm );
 </script>

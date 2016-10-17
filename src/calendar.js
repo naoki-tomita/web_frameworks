@@ -3,23 +3,23 @@
 
   root.calendar = {
     createDates: function( year, month ) {
-      var start = this._getLastMonday( year, month ), end = this._getDates( year, month ), dates = [], date;
+      var start = this._getLastMonday( year, month ), dates = [], date;
       date = start;
-      while( date <= end ) {
+      for ( var i = 0; i < 42; i++ ) {
         dates.push( {
-          date: date,
-          text: date.getDate()
+          data: date,
+          date: date.getDate()
         } );
         date = this._nextDate( date );
       }
       return dates;
     },
     _nextDate: function( date ) {
-      next = new Date( date );
+      var next = new Date( date );
       next.setDate( date.getDate() + 1 );
       return next;
     },
-    _getDates: function( year, month ) {
+    _getLast: function( year, month ) {
       var last = new Date( parseInt( year, 10 ), parseInt( month, 10 ), 0 ).getDate();
       return new Date( parseInt( year, 10 ), parseInt( month, 10 ) - 1, last );
     },
