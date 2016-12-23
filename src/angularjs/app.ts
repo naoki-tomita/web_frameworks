@@ -2,31 +2,33 @@ import "reflect-metadata";
 import "zone.js";
 import "rxjs/Rx";
 
-import { Component } from 'angular2/core';
+import { calendar } from "../calendar.js";
+
+import { Component, Input, OnInit } from 'angular2/core';
 import { bootstrap } from "angular2/platform/browser";
 import { CORE_DIRECTIVES } from "angular2/common";
+
 
 @Component( {
   selector: "days",
   template: `
     <li *ngFor="let day of days">
-      {{day.day}}
+      {{day.date}}
     </li>
   `
 } )
-class Days {
-  year: string;
-  month: string;
+class Days implements OnInit {
+  @Input( "ngYear" ) year: string;
+  @Input( "ngMonth" ) month: string;
   days: Array<Object>;
   constructor() {
-    this.days = [
-      { day: 0 },
-      { day: 1 },
-      { day: 2 }
-    ]
+
   };
   change( year: string, month: string ) {
-
+    this.days = calendar.createDates( this.year, this.month );
+  };
+  ngOnInit() {
+    this.change( this.year, this.month );
   };
 };
 
@@ -43,7 +45,7 @@ class Days {
       <li>fri</li>
       <li>sat</li>
       <li>sun</li>
-      <days></days>
+      <days [ngYear]="ngYear" [ngMonth]="ngMonth"></days>
     </ul>
   `,
   directives: [ Days ]

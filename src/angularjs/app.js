@@ -11,27 +11,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 require("reflect-metadata");
 require("zone.js");
 require("rxjs/Rx");
+const calendar_js_1 = require("../calendar.js");
 const core_1 = require("angular2/core");
 const browser_1 = require("angular2/platform/browser");
 let Days = class Days {
     constructor() {
-        this.days = [
-            { day: 0 },
-            { day: 1 },
-            { day: 2 }
-        ];
     }
     ;
     change(year, month) {
+        this.days = calendar_js_1.calendar.createDates(this.year, this.month);
+    }
+    ;
+    ngOnInit() {
+        this.change(this.year, this.month);
     }
     ;
 };
+__decorate([
+    core_1.Input("ngYear"),
+    __metadata("design:type", String)
+], Days.prototype, "year", void 0);
+__decorate([
+    core_1.Input("ngMonth"),
+    __metadata("design:type", String)
+], Days.prototype, "month", void 0);
 Days = __decorate([
     core_1.Component({
         selector: "days",
         template: `
     <li *ngFor="let day of days">
-      {{day.day}}
+      {{day.date}}
     </li>
   `
     }),
@@ -58,7 +67,7 @@ Calendar = __decorate([
       <li>fri</li>
       <li>sat</li>
       <li>sun</li>
-      <days></days>
+      <days [ngYear]="ngYear" [ngMonth]="ngMonth"></days>
     </ul>
   `,
         directives: [Days]

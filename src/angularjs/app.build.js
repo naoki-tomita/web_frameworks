@@ -68217,20 +68217,27 @@ var __metadata = this && this.__metadata || function (k, v) {
 require("reflect-metadata");
 require("zone.js");
 require("rxjs/Rx");
+const calendar_js_1 = require("../calendar.js");
 const core_1 = require("angular2/core");
 const browser_1 = require("angular2/platform/browser");
 let Days = class Days {
-    constructor() {
-        this.days = [{ day: 0 }, { day: 1 }, { day: 2 }];
+    constructor() {}
+
+    change(year, month) {
+        this.days = calendar_js_1.calendar.createDates(this.year, this.month);
     }
 
-    change(year, month) {}
+    ngOnInit() {
+        this.change(this.year, this.month);
+    }
 };
+__decorate([core_1.Input("ngYear"), __metadata("design:type", String)], Days.prototype, "year", void 0);
+__decorate([core_1.Input("ngMonth"), __metadata("design:type", String)], Days.prototype, "month", void 0);
 Days = __decorate([core_1.Component({
     selector: "days",
     template: `
     <li *ngFor="let day of days">
-      {{day.day}}
+      {{day.date}}
     </li>
   `
 }), __metadata("design:paramtypes", [])], Days);
@@ -68254,7 +68261,7 @@ Calendar = __decorate([core_1.Component({
       <li>fri</li>
       <li>sat</li>
       <li>sun</li>
-      <days></days>
+      <days [ngYear]="ngYear" [ngMonth]="ngMonth"></days>
     </ul>
   `,
     directives: [Days]
@@ -68262,4 +68269,55 @@ Calendar = __decorate([core_1.Component({
 ;
 browser_1.bootstrap(Calendar);
 
-},{"angular2/core":3,"angular2/platform/browser":4,"reflect-metadata":324,"rxjs/Rx":335,"zone.js":625}]},{},[626]);
+},{"../calendar.js":627,"angular2/core":3,"angular2/platform/browser":4,"reflect-metadata":324,"rxjs/Rx":335,"zone.js":625}],627:[function(require,module,exports){
+module = module || {};
+module.exports = module.exports || {};
+
+(function (root) {
+  "use strict";
+
+  root.calendar = {
+    createDates: function (year, month) {
+      var start = this._getLastMonday(year, month),
+          dates = [],
+          date;
+      date = start;
+      for (var i = 0; i < 42; i++) {
+        dates.push({
+          data: date,
+          date: date.getDate()
+        });
+        date = this._nextDate(date);
+      }
+      return dates;
+    },
+    _nextDate: function (date) {
+      var next = new Date(date);
+      next.setDate(date.getDate() + 1);
+      return next;
+    },
+    _getLast: function (year, month) {
+      var last = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
+      return new Date(parseInt(year, 10), parseInt(month, 10) - 1, last);
+    },
+    _getFirstDay: function (year, month) {
+      return this._getFirst(year, month).getDay();
+    },
+    _getFirst: function (year, month) {
+      return new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
+    },
+    _getLastMonday: function (year, month) {
+      var fday = this._getFirst(year, month),
+          lastMonday;
+      // 月の最初の日から月曜日までの日数を引くことで前の月の最後の月曜を得る。
+      // 月の最初が日曜の場合は getDay() === 0 になるため、前の月曜日を探すためには 6日引く必要がある。
+      // それ以外は、曜日を引くだけでいい。
+      lastMonday = fday.setDate(fday.getDate() - (fday.getDay() === 0 ? 7 : fday.getDay()) + 1);
+      return fday;
+    }
+  };
+})(window);
+
+module.exports.calendar = window.calendar;
+
+},{}]},{},[626]);
