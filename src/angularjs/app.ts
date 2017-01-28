@@ -4,7 +4,7 @@ import "rxjs/Rx";
 
 import { calendar } from "../calendar.js";
 
-import { Component, Input, OnInit } from 'angular2/core';
+import { Component, Input, OnInit, OnChanges } from 'angular2/core';
 import { bootstrap } from "angular2/platform/browser";
 import { CORE_DIRECTIVES } from "angular2/common";
 
@@ -17,7 +17,7 @@ import { CORE_DIRECTIVES } from "angular2/common";
     </li>
   `
 } )
-class Days implements OnInit {
+class Days implements OnInit, OnChanges {
   @Input( "ngYear" ) year: string;
   @Input( "ngMonth" ) month: string;
   days: Array<Object>;
@@ -26,6 +26,9 @@ class Days implements OnInit {
   };
   change( year: string, month: string ) {
     this.days = calendar.createDates( this.year, this.month );
+  };
+  ngOnChanges() {
+    this.change( this.year, this.month );
   };
   ngOnInit() {
     this.change( this.year, this.month );

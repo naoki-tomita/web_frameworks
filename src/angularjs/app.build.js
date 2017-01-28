@@ -68227,6 +68227,10 @@ let Days = class Days {
         this.days = calendar_js_1.calendar.createDates(this.year, this.month);
     }
 
+    ngOnChanges() {
+        this.change();
+    }
+
     ngOnInit() {
         this.change(this.year, this.month);
     }
