@@ -1,0 +1,151 @@
+<script type='text/javascript' src="https://unpkg.com/react@15/dist/react.js"></script>
+<script type='text/javascript' src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+<style type="text/css">
+<!--
+* {
+	margin: 0;
+	padding: 0;
+}
+#calendar {
+	width: 700px;
+}
+li {
+  padding: 4px;
+  width: 90;
+  height: 40;
+	float: left;
+	list-style: none;
+  border: 1px solid black;
+}
+.sunday {
+  color: red;
+}
+.saturday {
+  color: blue;
+}
+.other {
+  color: gray;
+}
+-->
+</style>
+<span id="year"></span>
+<span id="month"></span>
+<div id="calendar"></div>
+<script type='text/javascript' src='../calendar.js'></script>
+<script type="text/babel">
+  var calendarApp, Calendar, Input, Day;
+  calendarApp = {
+    init: function() {
+      this.year = new Date().getFullYear(),
+      this.month = new Date().getMonth() + 1
+    },
+    start: function() {
+      var year, month, calendar
+      calendar = ReactDOM.render( <Calendar year={ this.year } month={ this.month }/>, document.getElementById( "calendar" ) );
+      year = ReactDOM.render( <Input text={ this.year }　onChange={ function( year ) {
+        calendar.setYear( year );
+      } }/>, document.getElementById( "year" ) );
+      month = ReactDOM.render( <Input text={ this.month } onChange={ function( month ) {
+        calendar.setMonth( month );
+      } }/>, document.getElementById( "month" ) );
+    }
+  };
+
+  Input = React.createClass( {
+    getInitialState: function() {
+      return {
+        text: this.props.text
+      };
+    },
+    changeText: function( e ) {
+      this.setState( {
+        text: e.target.value
+      } );
+      this.props.onChange( e.target.value );
+    },
+    render: function() {
+      return (
+        <input type="text" value={ this.state.text } onChange={ this.changeText } ></input>
+      );
+    }
+  } );
+
+  Calendar = React.createClass( {
+    setYear: function( year ) {
+      this.setState( {
+        year: year
+      } );
+    },
+    setMonth: function( month ) {
+      this.setState( {
+        month: month
+      } );
+    },
+    getInitialState: function() {
+      return {
+        year: this.props.year,
+        month: this.props.month
+      };
+    },
+    render: function() {
+      var dates = calendar.createDates( this.state.year, this.state.month ), list;
+      list = dates.map( function( date, index ) {
+        return (
+          <li>
+            <Day date={ date }/>
+          </li>
+        );
+      } );
+
+      return (
+        <ul>
+          <li>mon</li>
+          <li>tue</li>
+          <li>wed</li>
+          <li>thu</li>
+          <li>fri</li>
+          <li>sat</li>
+          <li>sun</li>
+          { list }
+        </ul>
+      );
+    }
+  } );
+  Day = React.createClass( {
+    getInitialState: function() {
+      return {
+        schedule: "none"
+      };
+    },
+    getDay: function( day ) {
+      if ( day.getDay() === 0 ) { // 日曜
+        return "sunday";
+      } else if ( day.getDay() === 6 ) {// 土曜
+        return "saturday";
+      }
+      return null;
+    },
+    onClick: function() {
+      var str = window.prompt( "予定を入力" );
+      if ( str ) {
+        this.setState( {
+          schedule: str
+        } );
+      }
+    },
+    render: function() {
+      var that = this;
+      return (
+        <div className={ this.getDay( this.props.date.data ) } onClick={ that.onClick }>
+          <div>{ this.props.date.date }</div>
+          <div>{ this.state.schedule }</div>
+        </div>
+      );
+    }
+  } );
+
+  calendarApp.init();
+  calendarApp.start();
+</script>

@@ -1,6 +1,3 @@
-module = module || {};
-module.exports = module.exports || {};
-
 ( function( root ) {
   "use strict";
 
@@ -41,6 +38,4 @@ module.exports = module.exports || {};
       return fday;
     }
   }
-} )( window )
-
-module.exports.calendar = window.calendar;
+} )( window );
