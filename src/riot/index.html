@@ -1,0 +1,73 @@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.2.1/riot+compiler.min.js"></script>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+<style type="text/css">
+<!--
+* {
+	margin: 0;
+	padding: 0;
+}
+#calendar {
+	width: 700px;
+}
+li {
+  padding: 4px;
+  width: 90;
+  height: 40;
+	float: left;
+	list-style: none;
+  border: 1px solid black;
+}
+.sunday {
+  color: red;
+}
+.saturday {
+  color: blue;
+}
+.other {
+  color: gray;
+}
+-->
+</style>
+<app></app>
+<script type='text/javascript' src='../calendar.js'></script>
+<script type="riot/tag">
+<app>
+  <input type="text" name="year" onChange="{ changedYear }"/>
+  <input type="text" name="month" onChange="{ changedMonth }"/>
+  <calendar year="{ year }" month="{ month }"></calendar>
+
+  this.year = new Date().getFullYear();
+  this.month = new Date().getMonth() + 1;
+
+  this.changedYear = function( year ) {
+    this.year = year.target.value;
+  };
+  this.changedMonth = function( month ) {
+    this.month = month.target.value;
+  };
+</app>
+
+<calendar>
+  <div id="calendar">
+    <ul>
+      <li>mon</li>
+      <li>tue</li>
+      <li>wed</li>
+      <li>thu</li>
+      <li>fri</li>
+      <li>sat</li>
+      <li>sun</li>
+      <li each="{dates}">
+        <div>{date}</div>
+        <div>{schedule}</div>
+      </li>
+    </ul>
+  </div>
+  this.year = opts.year;
+  this.month = opts.month;
+  this.dates = calendar.createDates( this.year, this.month );
+</calendar>
+</script>
+<script type="text/javascript">
+  riot.mount( "*" );
+</script>
