@@ -58,15 +58,27 @@ li {
       <li>sat</li>
       <li>sun</li>
       <li each="{dates}">
-        <div>{date}</div>
-        <div>{schedule}</div>
+        <date date="{date}" data="{data}" schedule="{schedule}"></date>
       </li>
     </ul>
   </div>
-  this.year = opts.year;
-  this.month = opts.month;
-  this.dates = calendar.createDates( this.year, this.month );
+  this.on( "mount", function() {
+    this.year = this.opts.year;
+    this.month = this.opts.month;
+    this.dates = calendar.createDates( this.year, this.month );
+    this.update();
+  } );
 </calendar>
+
+<date>
+  <div class="{data.getDay() === 0 ? 'sunday': data.getDay() === 6 ? 'saturday' : ''}">
+    <div>{date}</div>
+    <div>{schedule}</div>
+  </div>
+  this.date = this.opts.date;
+  this.data = this.opts.data;
+  this.schedule = this.opts.schedule || "none";
+</date>
 </script>
 <script type="text/javascript">
   riot.mount( "*" );
