@@ -4,8 +4,6 @@
   "description": "web framework trade fair",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:angular": "browserify ./src/angularjs/app.js -t babelify -o ./src/angularjs/app.build.js"
   },
   "repository": {
     "type": "git",
@@ -18,17 +16,7 @@
   },
   "homepage": "https://github.com/naoki-tomita/web_frameworks#readme",
   "devDependencies": {
-    "angular2": "^2.0.0-beta.17",
-    "babelify": "^7.3.0",
-    "browserify": "^13.1.1",
-    "es6-promise": "^4.0.5",
-    "es6-shim": "^0.35.1",
     "gulp": "^3.9.1",
-    "gulp-webserver": "^0.9.1",
-    "reflect-metadata": "^0.1.2",
-    "require": "^2.4.20",
-    "rxjs": "^5.0.0-beta.6",
-    "vinyl-source-stream": "^1.1.0",
-    "zone.js": "^0.6.26"
+    "gulp-webserver": "^0.9.1"
   }
 }
