@@ -1,4 +1,4 @@
-<script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.2.1/riot+compiler.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.2.1/riot+compiler.min.js"></script>
 <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
 <style type="text/css">
 <!--
@@ -28,19 +28,58 @@ li {
 }
 -->
 </style>
-<body>
-<app title="Hello World"></app>
+<app></app>
 <script type='text/javascript' src='../calendar.js'></script>
-
 <script type="riot/tag">
+<app>
+  <input type="text" name="year" onChange="{ changedYear }"/>
+  <input type="text" name="month" onChange="{ changedMonth }"/>
+  <calendar year="{ year }" month="{ month }"></calendar>
 
-  <app>
-    <h1>{ title }</h1>
-    this.title = opts.title;
-  </app>
+  this.year = new Date().getFullYear();
+  this.month = new Date().getMonth() + 1;
 
+  this.changedYear = function( year ) {
+    this.year = year.target.value;
+  };
+  this.changedMonth = function( month ) {
+    this.month = month.target.value;
+  };
+</app>
+
+<calendar>
+  <div id="calendar">
+    <ul>
+      <li>mon</li>
+      <li>tue</li>
+      <li>wed</li>
+      <li>thu</li>
+      <li>fri</li>
+      <li>sat</li>
+      <li>sun</li>
+      <li each="{dates}">
+        <date date="{date}" data="{data}" schedule="{schedule}"></date>
+      </li>
+    </ul>
+  </div>
+  this.on( "mount", function() {
+    this.year = this.opts.year;
+    this.month = this.opts.month;
+    this.dates = calendar.createDates( this.year, this.month );
+    this.update();
+  } );
+</calendar>
+
+<date>
+  <div class="{data.getDay() === 0 ? 'sunday': data.getDay() === 6 ? 'saturday' : ''}">
+    <div>{date}</div>
+    <div>{schedule}</div>
+  </div>
+  this.date = this.opts.date;
+  this.data = this.opts.data;
+  this.schedule = this.opts.schedule || "none";
+</date>
 </script>
-<script>
+<script type="text/javascript">
   riot.mount( "*" );
 </script>
-</body>
