@@ -32,8 +32,8 @@ li {
 <script type='text/javascript' src='../calendar.js'></script>
 <script type="riot/tag">
 <app>
-  <input type="text" name="year" onChange="{ changedYear }"/>
-  <input type="text" name="month" onChange="{ changedMonth }"/>
+  <input type="text" value="{ year }" onChange="{ changedYear }"/>
+  <input type="text" value="{ month }" onChange="{ changedMonth }"/>
   <calendar year="{ year }" month="{ month }"></calendar>
 
   this.year = new Date().getFullYear();
@@ -57,27 +57,47 @@ li {
       <li>fri</li>
       <li>sat</li>
       <li>sun</li>
-      <li each="{dates}">
-        <date date="{date}" data="{data}" schedule="{schedule}"></date>
+      <li each="{ dates }">
+        <date date="{ date }" data="{ data }" schedule="{ schedule }" color="{ color }"></date>
       </li>
     </ul>
   </div>
-  this.on( "mount", function() {
-    this.year = this.opts.year;
-    this.month = this.opts.month;
-    this.dates = calendar.createDates( this.year, this.month );
-    this.update();
+  this.initCalendar = function( year, month ) {
+    var i, date;
+    this.dates = calendar.createDates( year, month );
+    for ( i in this.dates ) {
+      date = this.dates[ i ];
+      date.color = ( date.data.getMonth() + 1 ).toString() !== month.toString() ? "other" :
+                   date.data.getDay() === 0 ? "sunday" :
+                   date.data.getDay() === 6 ? "saturday" : "";
+    }
+  };
+
+  this.initCalendar( this.opts.year, this.opts.month );
+  this.on( "update", function() {
+    this.initCalendar( this.opts.year, this.opts.month );
   } );
 </calendar>
 
 <date>
-  <div class="{data.getDay() === 0 ? 'sunday': data.getDay() === 6 ? 'saturday' : ''}">
-    <div>{date}</div>
-    <div>{schedule}</div>
+  <div class="{ color }" onClick="{ onClick }">
+    <div>{ date }</div>
+    <div>{ schedule }</div>
   </div>
   this.date = this.opts.date;
-  this.data = this.opts.data;
   this.schedule = this.opts.schedule || "none";
+  this.color = this.opts.color;
+  this.data = this.opts.data;
+  this.onClick = function() {
+    var str = window.prompt( "予定を入力" );
+    if ( str ) {
+      this.schedule = str;
+      calendar.addSchedule( this.data.getFullYear(),
+                            this.data.getMonth() + 1,
+                            this.date,
+                            this.schedule );
+    }
+  }
 </date>
 </script>
 <script type="text/javascript">

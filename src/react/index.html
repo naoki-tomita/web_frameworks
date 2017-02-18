@@ -116,7 +116,7 @@ li {
   Day = React.createClass( {
     getInitialState: function() {
       return {
-        schedule: "none"
+        schedule: this.props.date.schedule || "none"
       };
     },
     getDay: function( day ) {
@@ -133,12 +133,20 @@ li {
         this.setState( {
           schedule: str
         } );
+        calendar.addSchedule( this.props.date.data.getFullYear(),
+                              this.props.date.data.getMonth() + 1,
+                              this.props.date.data.getDate(),
+                              str );
       }
     },
+    componentWillReceiveProps: function( nextProps ) {
+      this.setState( {
+        schedule: nextProps.date.schedule || "none"
+      } );
+    },
     render: function() {
-      var that = this;
       return (
-        <div className={ this.getDay( this.props.date.data ) } onClick={ that.onClick }>
+        <div className={ this.getDay( this.props.date.data ) } onClick={ this.onClick }>
           <div>{ this.props.date.date }</div>
           <div>{ this.state.schedule }</div>
         </div>

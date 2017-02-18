@@ -8,11 +8,26 @@
       for ( var i = 0; i < 42; i++ ) {
         dates.push( {
           data: date,
-          date: date.getDate()
+          date: date.getDate(),
+          schedule: this._takeOutSchedule( date.getFullYear(),
+                                           date.getMonth() + 1,
+                                           date.getDate() )
         } );
         date = this._nextDate( date );
       }
       return dates;
+    },
+    _takeOutSchedule: function( year, month, date ) {
+      return this.schedule &&
+             this.schedule[ year ] &&
+             this.schedule[ year ][ month ] &&
+             this.schedule[ year ][ month ][ date ];
+    },
+    addSchedule: function( year, month, date, schedule ) {
+      this.schedule = this.schedule || {};
+      this.schedule[ year ] = this.schedule[ year ] || {};
+      this.schedule[ year ][ month ] = this.schedule[ year ][ month ] || {};
+      this.schedule[ year ][ month ][ date ] = schedule;
     },
     _nextDate: function( date ) {
       var next = new Date( date );
