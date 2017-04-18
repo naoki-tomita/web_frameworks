@@ -9,7 +9,7 @@
 1. `gulp`
 1. access to `http:localhost:8080/knockout/index.html`
 
-# used framework
+# used framework(plans)
 * React.js
 * Angular.js
 * Angular.js 2.0
